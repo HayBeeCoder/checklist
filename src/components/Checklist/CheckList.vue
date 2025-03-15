@@ -16,12 +16,10 @@ const props = defineProps(['items','lastChecked'])
 <style scoped>
 ul{
   font-size: 0.8rem;
-  width: 94vw;
-  max-width: 400px;
+ 
   display:flex;
   flex-direction: column;
   gap: 20px;
-  margin: 0 auto;
   align-items: stretch;
 
 }

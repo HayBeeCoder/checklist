@@ -1,8 +1,7 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
-import CheckList from './Checklist/CheckList.vue'
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import CheckList from './components/Checklist/CheckList.vue'
+import useLocalStorage from './composables/useLocalStorage'
 
 const items = ref([
   {
@@ -52,15 +51,36 @@ const items = ref([
   },
 ])
 
+const { read, write } = useLocalStorage('checklist', 'items')
 // const lastChecked = ref(-1)
 const lastChecked = computed(() => {
   return items.value.findLastIndex((item) => item.checked)
+})
+
+onMounted(() => {
+  const itemsFromLocal = read()
+  if (itemsFromLocal == null) {
+    return
+  } else {
+    items.value = itemsFromLocal
+  }
+})
+
+watch(items, (newItems) => {
+  
+  write(newItems)
+},{
+  deep: true
 })
 </script>
 
 <template>
   <div
-    :class="{ 'ellipse upper-right-ellipse': true, positive: lastChecked >= 5 }"
+    :class="{
+      'ellipse upper-right-ellipse': true,
+      positive: lastChecked >= 5,
+      negative: lastChecked < 5,
+    }"
     aria-hidden
   ></div>
   <div class="ellipse lower-left-ellipse" aria-hidden></div>
@@ -72,6 +92,16 @@ const lastChecked = computed(() => {
 
   <main>
     <CheckList :items="items" :last-checked="lastChecked" />
+    <div class="progress-wrapper" aria-hidden>
+      <div
+        class="progress"
+        aria-hidden
+        :style="{ width: `${((lastChecked + 1) * 100) / items.length}%` }"
+      ></div>
+      <p class="irish-grover progress-value">
+        {{ Math.floor(((lastChecked + 1) * 100) / items.length) }}%
+      </p>
+    </div>
   </main>
 </template>
 
@@ -91,7 +121,10 @@ h1 {
 main {
   position: relative;
   z-index: 1000;
-  padding-bottom: 20rem;
+  padding-bottom: 2rem;
+  width: 94vw;
+  max-width: 400px;
+  margin: 0 auto;
 }
 header {
   padding: 2rem;
@@ -113,24 +146,52 @@ header {
   top: 21px;
   left: 100%;
   position: fixed;
-  background-color: rgba(232, 41, 22, 1);
   top: 0;
   left: 100%;
 }
-
+.upper-right-ellipse.negative {
+  z-index: -100px;
+  filter: blur(15rem);
+  background-color: rgba(232, 41, 22, 1);
+}
 .upper-right-ellipse.positive {
-  background: rgba(0, 255, 9, 1);
+  z-index: -100px;
+  filter: blur(15rem);
+  background-color: rgba(0, 255, 9, 1);
 }
 
 .lower-left-ellipse {
   background: rgba(37, 37, 37, 1);
+  left: 0;
   bottom: 21px;
-  transform: translateX(-60%);
+  transform: translateX(-50%);
 }
 
 .logo {
   display: block;
   margin: 0 auto 2rem;
+}
+
+.progress-wrapper {
+  margin: 20px 0 20px;
+  display: block;
+  width: 100%;
+  height: 10px;
+  border-radius: 28px;
+  background: linear-gradient(90deg, #000000 0%, #252525 100%);
+  border: 1px solid rgba(15, 15, 15, 1);
+}
+
+.progress {
+  background: linear-gradient(90deg, #ff0000 0%, #ff7200 44.9%, #feea15 71.9%, #00ff09 100%);
+  height: 100%;
+  border-radius: 28px;
+}
+
+.progress-value {
+  text-align: center;
+  margin: 10px;
+  color: rgba(188, 188, 188, 1);
 }
 
 @media (min-width: 1024px) {
@@ -158,8 +219,8 @@ header {
   }
   .upper-right-ellipse {
     transform: translateX(-80%);
-    top: -21px;
-    filter: blur(25rem);
+    top: -21%;
+    /* filter: blur(rem); */
     /* left: 100%; */
     /* position: fixed; */
     /* background-color: rgba(232, 41, 22, 1); */
