@@ -67,6 +67,8 @@ onMounted(() => {
 })
 
 watch(items, (newItems) => {
+
+  
   
   write(newItems)
 },{
