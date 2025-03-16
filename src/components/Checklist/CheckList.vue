@@ -1,14 +1,14 @@
 <script lang="js" setup>
 import ChecklistItem from './ChecklistItem.vue'
 
-const props = defineProps(['items','lastChecked'])
+const props = defineProps(['items','checked'])
 
 </script>
 
 <template>
   <ul>
-    <li v-for="(item, key) in items" :key="key" :class="{'positive': item.checked, 'cursor-not-allowed': lastChecked + 1 != item.position || lastChecked != item.position  }">
-      <ChecklistItem :item="item" :position="item.position" :last-checked="lastChecked"/>
+    <li v-for="(item, key) in items" :key="key" :class="{'positive': item.checked  }">
+      <ChecklistItem :item="item" :position="item.position" :last-checked="checked"/>
     </li>
   </ul>
 </template>

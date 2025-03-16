@@ -52,9 +52,9 @@ const items = ref([
 ])
 
 const { read, write } = useLocalStorage('checklist', 'items')
-// const lastChecked = ref(-1)
-const lastChecked = computed(() => {
-  return items.value.findLastIndex((item) => item.checked)
+// const checked = ref(-1)
+const checked = computed(() => {
+  return items.value.filter((item) => item.checked).length
 })
 
 onMounted(() => {
@@ -80,8 +80,8 @@ watch(items, (newItems) => {
   <div
     :class="{
       'ellipse upper-right-ellipse': true,
-      positive: lastChecked >= 5,
-      negative: lastChecked < 5,
+      positive: checked >= 6,
+      negative: checked < 6,
     }"
     aria-hidden
   ></div>
@@ -93,15 +93,15 @@ watch(items, (newItems) => {
   </header>
 
   <main>
-    <CheckList :items="items" :last-checked="lastChecked" />
+    <CheckList :items="items" :checked="checked" />
     <div class="progress-wrapper" aria-hidden>
       <div
         class="progress"
         aria-hidden
-        :style="{ width: `${((lastChecked + 1) * 100) / items.length}%` }"
+        :style="{ width: `${((checked ) * 100) / items.length}%` }"
       ></div>
       <p class="irish-grover progress-value">
-        {{ Math.floor(((lastChecked + 1) * 100) / items.length) }}%
+        {{ Math.floor(((checked ) * 100) / items.length) }}%
       </p>
     </div>
   </main>

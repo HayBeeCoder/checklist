@@ -3,21 +3,22 @@ const props = defineProps(['item', 'lastChecked'])
 // console.log({prp: props.item.checked})
 </script>
 
+// 'cursor-not-allowed': lastChecked + 1 != item.position || lastChecked != item.position,
+  
 <template>
   <label
     :for="item.value"
     :class="{
       positive: item.checked,
-      'cursor-not-allowed': lastChecked + 1 != item.position || lastChecked != item.position,
-    }"
+      }"
   >
     <span>
       <input
         type="checkbox"
         v-model="item.checked"
         :id="item.value"
-        :disabled="item.checked ? lastChecked != item.position : lastChecked + 1 != item.position"
       />
+        <!-- :disabled="item.checked ? lastChecked != item.position : lastChecked + 1 != item.position" -->
 
       <!-- <input type="checkbox" name="item.position" /> -->
     </span>
